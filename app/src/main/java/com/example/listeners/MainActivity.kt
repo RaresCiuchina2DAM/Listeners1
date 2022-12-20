@@ -7,55 +7,60 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doOnTextChanged
 import com.example.listeners.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //seteamos el layout principal mediante activityMainBinding
+
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.etNumero.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.btnRestar.setBackgroundColor(getColor(R.color.purple_200))
+                binding.btnSumar.setBackgroundColor(getColor(R.color.purple_200))
+            } else {
 
-
-        //cuando no se este escribiendo en el edittext se cambia el color de fondo de los botones
-
-        binding.etNumero.addTextChangedListener {
-            binding.btnSumar.setBackgroundColor(getColor(R.color.purple_200))
-            binding.btnRestar .setBackgroundColor(getColor(R.color.purple_200))
-
-        }
-
-
-        //cuando se hace click en el boton sumar se suma 1 al
-        // numero que se encuentra en el textview
-
-        binding.btnSumar.setOnClickListener {
-            binding.btnSumar.setBackgroundColor(getColor(R.color.black))
-            binding.btnRestar.setBackgroundColor(getColor(R.color.black))
-            var numero = binding.tvNumero.text.toString().toInt()
-            numero++
-            binding.tvNumero.text = numero.toString()
-        }
-
-
-
-        //cuando se hace click en el boton restar se resta 1 al numero que se encuentra en el edittext
-
-        binding.btnRestar.setOnClickListener {
-            var numero = binding.tvNumero.text.toString().toInt()
-            if (numero > 0) {
-                numero--
-                binding.tvNumero.text = numero.toString()
-            }else{
-                binding.tvNumero.text = "0"
+                binding.btnRestar.setBackgroundColor(getColor(R.color.black))
+                binding.btnSumar.setBackgroundColor(getColor(R.color.black))
             }
-            binding.btnSumar.setBackgroundColor(getColor(R.color.black))
-            binding.btnRestar.setBackgroundColor(getColor(R.color.black))
         }
+
+        //se ingresa un numero en el edittext
+        binding.etNumero.addTextChangedListener {
+            binding.tvNumero.text = it.toString()
+            //quitar el focus del edittext
+            binding.etNumero.clearFocus()
+        }
+
+        //se suma uno al numero del textview
+        binding.btnSumar.setOnClickListener {
+            val numero = binding.tvNumero.text.toString().toInt()
+            binding.tvNumero.text = (numero + 1).toString()
+
+        }
+
+        //se resta uno al numero del textview
+        binding.btnRestar.setOnClickListener {
+            //si es menor que 0 no se resta
+            if (binding.tvNumero.text.toString().toInt() > 0) {
+                val numero = binding.tvNumero.text.toString().toInt()
+                binding.tvNumero.text = (numero - 1).toString()
+            }else
+            {
+                binding.tvNumero.text = "0"
+                Toast.makeText(this, "No se puede restar", Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+
 
 
     }
